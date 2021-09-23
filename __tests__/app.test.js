@@ -18,7 +18,7 @@ describe('GET/api/categories', () => {
         }) 
     }); 
 });
-describe('/api/reviews/:review_id', () => {
+describe('GET/api/reviews/:review_id', () => {
     test('200: responds with a review as requested', () => {
         const review_id = 1
         return request(app)
@@ -37,11 +37,19 @@ describe('/api/reviews/:review_id', () => {
                 owner: 'mallionaire',
                 created_at: '2021-01-18T10:00:20.514Z',
                 comment_count: "0"
-
             })
-
-        })
+        })  
+    });  
+});
+describe('PATCH/api/reviews/:review_id', () => {
+    test('201: responds by updating the reviews then return the updated review', () => {
+        const review_id = 2
+        const newVote =1
+        return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send({inc_votes: newVote})
+        .expect(201)
+        
         
     });
-    
 });
