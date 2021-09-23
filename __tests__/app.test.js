@@ -49,7 +49,23 @@ describe('PATCH/api/reviews/:review_id', () => {
         .patch(`/api/reviews/${review_id}`)
         .send({inc_votes: newVote})
         .expect(201)
+        .then((res) =>{
+            //console.log(res.body)
+            expect(res.body.updatedReview.votes).toBe(6)
+        })
         
         
     });
+});
+describe('get/api/reviews/:review_id/comments', () => {
+    test('200: responds with array of comments by review_id', () => {
+        const review_id = 3
+        return request(app)
+        .get(`/api/reviews/${review_id}/comments`)
+        .expect(200)
+        .then((res) =>{
+            expect(res.body.comments).toHaveLength(3)
+        })
+    });
+    
 });

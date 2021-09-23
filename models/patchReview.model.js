@@ -6,7 +6,7 @@ exports.patchReview = (newVote, review_id) =>{
     WHERE review_id = $2
     RETURNING*;`, [newVote, review_id])
     .then((result) => {
-        
+        //console.log(result.rows[0].votes)
         return result.rows[0]
     })
                   
