@@ -1,7 +1,7 @@
 const express = require("express")
 const {getCategories} = require('./controllers/category.controller')
 const {getReview} = require('./controllers/getReview.controller')
-const listen = require('./listen')
+
 
 const app = express()
 app.use(express.json())
