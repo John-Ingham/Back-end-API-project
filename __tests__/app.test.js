@@ -64,6 +64,15 @@ describe('PATCH/api/reviews/:review_id', () => {
             expect(res.body.updatedReview.votes).toBe(6)
         }) 
     });
+    test('404: for invalid review_id value ', () => {
+        const review_id = 3456
+        return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(404)
+        .then((res) =>{
+            expect(res.body.msg).toBe("No review found matching 3456")
+        })
+    });  
     
 });
 describe('get/api/reviews/:review_id/comments', () => {
@@ -76,6 +85,16 @@ describe('get/api/reviews/:review_id/comments', () => {
             expect(res.body.comments).toHaveLength(3)
         })
     });
+    test('404: for invalid review_id value ', () => {
+        const review_id = 9090
+        return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(404)
+        .then((res) =>{
+            expect(res.body.msg).toBe("No review found matching 9090")
+        })
+    });  
+    
 });
 describe('/api/reviews', () => {
     test('200: Should return an array of reviews, which can accept queries', () => {
@@ -118,6 +137,15 @@ describe('/api/reviews/:review_id/comments', () => {
             expect(res.body.madeComment).toBe("This game slaps!")
         })
     });
+    test('404: for invalid review_id value ', () => {
+        const review_id = 6969
+        return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(404)
+        .then((res) =>{
+            expect(res.body.msg).toBe("No review found matching 6969")
+        })
+    });  
     
 });
 describe('/api', () => {

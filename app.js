@@ -12,11 +12,11 @@ app.use(express.json())
 
 
 app.get('/api/categories', getCategories)
-app.get('/api/reviews/:review_id', getReview)
-app.patch('/api/reviews/:review_id', updateReview)
+app.get('/api/reviews/:review_id', getReview) //e
+app.patch('/api/reviews/:review_id', updateReview) //e
 app.get('/api/reviews', getReviews)
-app.get('/api/reviews/:review_id/comments', getReviewComment)
-app.post('/api/reviews/:review_id/comments', postComment)
+app.get('/api/reviews/:review_id/comments', getReviewComment) //e
+app.post('/api/reviews/:review_id/comments', postComment) //e
 app.get('/api', getEndpoints)
 
 app.all('*' , (req, res, next) =>{
