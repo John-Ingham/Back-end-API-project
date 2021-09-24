@@ -67,5 +67,31 @@ describe('get/api/reviews/:review_id/comments', () => {
             expect(res.body.comments).toHaveLength(3)
         })
     });
-    
 });
+describe('/api/reviews', () => {
+    test('200: Should return an array of reviews, which can accept queries', () => {
+        return request(app)
+        .get('/api/reviews')
+        .expect(200)
+        .then((res)=>{
+            expect(res.body.reviews).toHaveLength(13)
+
+        //     res.body.reviews.forEach((review) =>{
+        //         expect(review).toMatchObject(
+        //             {
+        //                 review_id: expect.any(Number),
+        //                 title: expect.any(String),
+        //                 review_body: expect.any(String),
+        //                 designer: expect.any(String),
+        //                 review_image_url: expect.any(String),
+        //                 votes: expect.any(Number),
+        //                 category: expect.any(String),
+        //                 owner: expect.any(String),
+        //                created_at: expect.any(Date), <>TIMSTAMP?<>
+        //                 comment_count: expect.any(String)
+        //               }
+        //        ) 
+        // })
+    })  
+})
+})
