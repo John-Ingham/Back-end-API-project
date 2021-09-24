@@ -8,6 +8,13 @@ exports.fetchReview = (review_id) => {
     GROUP BY reviews.review_id
     `, [review_id])
     .then((result) =>{
+        const review = result.rows[0]
+        if (!review) {
+            return Promise.reject({
+                status: 404,
+                msg: `No review found matching ${review_id}`
+            })
+        }
         return result.rows[0]
     })
 }

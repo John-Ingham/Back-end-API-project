@@ -17,6 +17,7 @@ describe('GET/api/categories', () => {
             expect(res.body.categories).toHaveLength(4)
         }) 
     }); 
+
 });
 describe('GET/api/reviews/:review_id', () => {
     test('200: responds with a review as requested', () => {
@@ -39,6 +40,15 @@ describe('GET/api/reviews/:review_id', () => {
                 comment_count: "0"
             })
         })  
+    });
+    test('404: for invalid review_id value ', () => {
+        const review_id = 3456
+        return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(404)
+        .then((res) =>{
+            expect(res.body.msg).toBe("No review found matching 3456")
+        })
     });  
 });
 describe('PATCH/api/reviews/:review_id', () => {
@@ -52,10 +62,9 @@ describe('PATCH/api/reviews/:review_id', () => {
         .then((res) =>{
             //console.log(res.body)
             expect(res.body.updatedReview.votes).toBe(6)
-        })
-        
-        
+        }) 
     });
+    
 });
 describe('get/api/reviews/:review_id/comments', () => {
     test('200: responds with array of comments by review_id', () => {
@@ -95,3 +104,52 @@ describe('/api/reviews', () => {
     })  
 })
 })
+describe('/api/reviews/:review_id/comments', () => {
+    test('201: creates new comment and returns the comment', () => {
+        const username = "mallionaire"
+        const body = "This game slaps!"
+        const review_id = 2
+        return request(app)
+        .post(`/api/reviews/${review_id}/comments`)
+        .send({username: username,
+               body: body})
+        .expect(201)
+        .then((res) =>{
+            expect(res.body.madeComment).toBe("This game slaps!")
+        })
+    });
+    
+});
+describe('/api', () => {
+    test('200: returns an object with the list of endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then((res) =>{
+            //console.log(res.body, "><><><><>")
+            expect(res.body).toEqual({
+                categoriesList: '/api/categories',
+                reviewById: '/api/reviews/:review_id',
+                updateReview: '/api/reviews/:review_id',
+                allReviews: '/api/reviews',
+                commentsFromReview: '/api/reviews/:review_id/comments',
+                postComment: '/api/reviews/:review_id/comments'
+              })
+        })
+        
+    });
+    
+});
+describe('ANY/invalid url path', () => {
+    test('404: invalid/non-existant URl given', () => {
+        return request(app)
+
+        .get('/api/walrus')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('Invalid URL')
+        })
+        
+    });
+    
+});
