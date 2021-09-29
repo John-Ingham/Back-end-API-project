@@ -5,7 +5,7 @@ exports.updateReview = (req, res, next) => {
     const{inc_votes: newVote} = req.body
     return patchReview(newVote, review_id)
     .then((updatedReview) =>{
-        res.status(201).send({updatedReview})
+        res.status(200).send({updatedReview})
     })
     .catch((err) =>{
         next(err)

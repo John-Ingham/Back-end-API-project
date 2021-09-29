@@ -5,17 +5,15 @@ const { formatUserData, formatCategoryData, formatReviewData, formatCommentsData
 
 const seed = async (data) => {
   const { categoryData, commentData, reviewData, userData } = data;
-  // 1. create tables
+  // Create tables
    const dropTables = async () => {
      await db.query(`DROP TABLE IF EXISTS comments;`)
      await db.query(`DROP TABLE IF EXISTS reviews;`)
      await db.query(`DROP TABLE IF EXISTS categories;`)
      await db.query(`DROP TABLE IF EXISTS users;`)
-  //console.log("Tables dropped")
+ 
    }
   await dropTables()
-  
-
   
    return db.query(`CREATE TABLE categories (
    slug VARCHAR (500) PRIMARY KEY NOT NULL,
@@ -40,7 +38,7 @@ const seed = async (data) => {
     title VARCHAR (500) NOT NULL,
     review_body VARCHAR (1000) NOT NULL,
     designer VARCHAR (500) NOT NULL,
-    review_image_url TEXT DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+    review_img_url TEXT DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
     votes INT DEFAULT 0,
     category VARCHAR (500),
     owner VARCHAR (500),
@@ -56,14 +54,14 @@ const seed = async (data) => {
       CREATE TABLE comments (
       comment_id SERIAL PRIMARY KEY,
       author VARCHAR (500) REFERENCES users(username),
-      review_id INT REFERENCES reviews(review_id),
+      review_id INT REFERENCES reviews(review_id) ON DELETE CASCADE,
       votes INT DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       body VARCHAR (500) NOT NULL
     );`)
   })
   
-  // 2. insert data
+  // Insert data
   .then(()=> {
     const formattedUserData = formatUserData(userData)
     const shopInsertion = format(
@@ -84,7 +82,7 @@ const seed = async (data) => {
     const formattedReviewData = formatReviewData(reviewData)
     
     const reviewInsertion =format(
-      `INSERT INTO reviews (title, review_body, designer, review_image_url, votes, category, owner, created_at) VALUES %L RETURNING *;`,
+      `INSERT INTO reviews (title, review_body, designer, review_img_url, votes, category, owner, created_at) VALUES %L RETURNING *;`,
       formattedReviewData
     )
     return db.query(reviewInsertion)
@@ -99,8 +97,5 @@ const seed = async (data) => {
   })
 
 } 
-
-
-
 
 module.exports = seed;

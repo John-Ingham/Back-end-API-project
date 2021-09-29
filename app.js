@@ -1,22 +1,18 @@
+const {getCategories, getReview, updateReview, getReviewComment, getReviews, postComment, getEndpoints} = require('./index')
+
 const express = require("express")
-const {getCategories} = require('./controllers/category.controller')
-const {getReview} = require('./controllers/getReview.controller')
-const{updateReview} = require('./controllers/patchReview.controller')
-const{getReviewComment} = require('./controllers/getReviewComment.controller')
-const{getReviews} = require('./controllers/reviewArray.controller')
-const{postComment} = require('./controllers/postComment.controller')
-const{getEndpoints} = require('./controllers/endpointView.controller')
 
 const app = express()
 app.use(express.json())
 
 
 app.get('/api/categories', getCategories)
-app.get('/api/reviews/:review_id', getReview) //e
-app.patch('/api/reviews/:review_id', updateReview) //e
+app.route('/api/reviews/:review_id')
+.get(getReview)
+.patch(updateReview)
 app.get('/api/reviews', getReviews)
-app.get('/api/reviews/:review_id/comments', getReviewComment) //e
-app.post('/api/reviews/:review_id/comments', postComment) //e
+app.get('/api/reviews/:review_id/comments', getReviewComment)
+app.post('/api/reviews/:review_id/comments', postComment)
 app.get('/api', getEndpoints)
 
 app.all('*' , (req, res, next) =>{
@@ -30,6 +26,14 @@ if (err.status) {
 } else {
     next(err)
 }
+})
+app.use((err, req, res, next) =>{
+    if (err.code === "22P02"){
+        res.status(400)
+        .send({msg : "Bad request"})
+    } else {
+        next(err)
+    }
 })
 app.use((err, req, res, next) => {
     console.log(err, "<><><>Unhandled Error<><><>")

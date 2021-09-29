@@ -13,12 +13,20 @@ describe('GET/api/categories', () => {
         .get('/api/categories')
         .expect(200)
         .then((res) => {
-            //console.log(res.body)
+            
             expect(res.body.categories).toHaveLength(4)
-        }) 
+            
+            res.body.categories.forEach((category) =>{
+                expect(category.length).not.toBe(0)
+                expect(category).toMatchObject(
+                    {slug: expect.any(String),
+                     description: expect.any(String)}
+                )
+            }) 
     }); 
 
 });
+})
 describe('GET/api/reviews/:review_id', () => {
     test('200: responds with a review as requested', () => {
         const review_id = 1
@@ -26,13 +34,13 @@ describe('GET/api/reviews/:review_id', () => {
         .get(`/api/reviews/${review_id}`)
         .expect(200)
         .then((res) =>{
-            //console.log(res.body.review)
+        
             expect(res.body.review).toEqual({
                 review_id: 1,
                 title: 'Agricola',
                 review_body: 'Farmyard fun!',
                 designer: 'Uwe Rosenberg',
-                review_image_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
                 votes: 1,
                 category: 'euro game',
                 owner: 'mallionaire',
@@ -49,21 +57,71 @@ describe('GET/api/reviews/:review_id', () => {
         .then((res) =>{
             expect(res.body.msg).toBe("No review found matching 3456")
         })
-    });  
+    }); 
+    test('400; Bad request for invalid review_id - not an integer', () => {
+        const review_id = "not-an-id"
+        return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(400)
+        .then((res) =>{
+            expect(res.body.msg).toBe("Bad request")
+        
+    });
+    }) 
 });
 describe('PATCH/api/reviews/:review_id', () => {
-    test('201: responds by updating the reviews then return the updated review', () => {
+    test('200: responds by updating the reviews then return the updated review', () => {
         const review_id = 2
         const newVote =1
         return request(app)
         .patch(`/api/reviews/${review_id}`)
         .send({inc_votes: newVote})
-        .expect(201)
+        .expect(200)
         .then((res) =>{
-            //console.log(res.body)
+            //console.log(res.body, ">>>>>>>>>>>>>>>>>>>>>>")
             expect(res.body.updatedReview.votes).toBe(6)
+
+            // res.body.categories.forEach((review) =>{
+            //     expect(review.length).not.toBe(0)
+            //     expect(review).toMatchObject(
+            //         {review_id: expect.any(Number),
+            //             title: expect.any(String),
+            //             review_body: "If you've ever wanted to accuse your siblings, cousins or friends of being part of a plot to murder everyone whilst secretly choosing which one of them should get the chop next - this is the boardgame for you. Buyer beware: once you gain a reputation for being able to lie with a stone face about being the secret killer you may never lose it.",
+            //             designer: 'Fiona Lohoar',
+            //             review_image_url: 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+            //             votes: 8,
+            //             category: 'social deduction',
+            //             owner: 'mallionaire',
+            //             created_at: 2021-01-18T10:01:41.251Z,
+            //             comment_count: '0'}
+            //     )
+            // }) 
         }) 
     });
+    test('400; Bad request for invalid review_id - not an integer', () => {
+        const review_id = "not-an-id"
+        const newVote = 1 
+        return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send({inc_votes: newVote})
+        .expect(400)
+        .then((res) =>{
+            expect(res.body.msg).toBe("Bad request")
+        
+    });
+    })
+    test('400; Bad request for vote entry - not an integer', () => {
+        const review_id = 2
+        const newVote = "gibberish"
+        return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send({inc_votes: newVote})
+        .expect(400)
+        .then((res) =>{
+            expect(res.body.msg).toBe("Bad request")
+        
+    });
+    })
     test('404: for invalid review_id value ', () => {
         const review_id = 3456
         return request(app)
@@ -97,31 +155,55 @@ describe('get/api/reviews/:review_id/comments', () => {
     
 });
 describe('/api/reviews', () => {
-    test('200: Should return an array of reviews, which can accept queries', () => {
+    test('200: Should return an array of review objects', () => {
         return request(app)
         .get('/api/reviews')
         .expect(200)
         .then((res)=>{
             expect(res.body.reviews).toHaveLength(13)
-
-        //     res.body.reviews.forEach((review) =>{
-        //         expect(review).toMatchObject(
-        //             {
-        //                 review_id: expect.any(Number),
-        //                 title: expect.any(String),
-        //                 review_body: expect.any(String),
-        //                 designer: expect.any(String),
-        //                 review_image_url: expect.any(String),
-        //                 votes: expect.any(Number),
-        //                 category: expect.any(String),
-        //                 owner: expect.any(String),
-        //                created_at: expect.any(Date), <>TIMSTAMP?<>
-        //                 comment_count: expect.any(String)
-        //               }
-        //        ) 
-        // })
+            expect(res.body.reviews).toBeSortedBy('created_at', {descending:true})
+            res.body.reviews.forEach((review) =>{
+                expect(review.length).not.toBe(0)
+                expect(review).toMatchObject(
+                    {
+                        review_id: expect.any(Number),
+                        title: expect.any(String),
+                        designer: expect.any(String),
+                        review_img_url: expect.any(String),
+                        votes: expect.any(Number),
+                        category: expect.any(String),
+                        owner: expect.any(String),
+                       created_at: expect.any(String),
+                        comment_count: expect.any(String)
+                      }
+               ) 
+        })
     })  
-})
+    })
+    test('200: accepts a "sort_by" query', () => {
+        return request(app)
+        .get('/api/reviews?sort_by=votes')
+        .expect(200)
+        .then((res) =>{
+            expect(res.body).toBeSortedBy('votes')
+            expect(res.body.reviews[0]).toEqual(
+                {
+                    review_id: 12,
+                    title: "Scythe; you're gonna need a bigger table!",
+                    designer: 'Jamey Stegmaier',
+                    review_img_url: 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+                    votes: 100,
+                    category: 'social deduction',
+                    owner: 'mallionaire',
+                    created_at: '2021-01-22T10:37:04.839Z',
+                    comment_count: '0'
+                  }
+            )
+        })
+        
+        
+    });
+
 })
 describe('/api/reviews/:review_id/comments', () => {
     test('201: creates new comment and returns the comment', () => {

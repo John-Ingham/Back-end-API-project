@@ -1,7 +1,6 @@
-// extract any functions you are using to manipulate your data, into this file
+
 const {categoryData, commentData, reviewData, userData} = require('../data/test-data/index')
 
-//console.log({userData})
 
 exports.formatUserData = (userData) => {
 //make it - [[username, avatar url, name]]
@@ -47,4 +46,3 @@ exports.formatCommentsData = (commentData) => {
     })
     return formattedCommentData
 }
-//console.log(formattedUserData)

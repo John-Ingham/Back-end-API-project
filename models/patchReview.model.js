@@ -13,7 +13,7 @@ exports.patchReview = (newVote, review_id) =>{
                 msg: `No review found matching ${review_id}`
             })
         }
-        //console.log(result.rows[0].votes)
+        
         return result.rows[0]
     })
                   
