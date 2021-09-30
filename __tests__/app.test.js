@@ -173,7 +173,7 @@ describe('get/api/reviews/:review_id/comments', () => {
     });
     
 });
-describe.only('/api/reviews', () => {
+describe('/api/reviews', () => {
     test('200: Should return an array of review objects', () => {
         return request(app)
         .get('/api/reviews')
@@ -222,12 +222,12 @@ describe.only('/api/reviews', () => {
     });
     test('200: accepts a order query and returns ordered as queried', () => {
         return request(app)
-        .get('/api/reviews/order=asc')
+        .get('/api/reviews?order=asc')
         .expect(200)
         .then((res) =>{
-            expect(res.body).toBeSortedBy('votes', {descending:true})
+            expect(res.body).toBeSortedBy('created_at', {ascending:true})
         })
-        // Something very wrong with this currently passes, shouldn't
+       
     });
     test('400: Given an incorrect sort_by will reject', () => {
         return request(app)
@@ -250,16 +250,17 @@ describe.only('/api/reviews', () => {
         .get('/api/reviews?category=dexterity')
         .expect(200)
         .then((res) =>{
-            console.log(res.body)
+           
+            expect(res.body.reviews).toHaveLength(1)
         })
         
     });
-    test('400: Given an invalid category query will reject', () => {
+    test('404: Given an invalid category query will reject', () => {
         return request(app)
         .get('/api/reviews?category=chance')
-        .expect(400)
+        .expect(404)
         .then((res) =>{
-            expect(res.body.msg).toBe("Invalid category query")
+            expect(res.body.msg).toBe("Category not found")
         })
     });
 
