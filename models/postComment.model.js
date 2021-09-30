@@ -16,7 +16,7 @@ exports.makeComment = (username, review_id, body) =>{
                 msg: `No review found matching ${review_id}`
             })
         }
-        //console.log(result.rows[0].body)
+       
         return result.rows[0].body
     })
 }

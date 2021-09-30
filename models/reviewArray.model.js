@@ -29,5 +29,4 @@ exports.fetchReviewArray = (sort_by = "created_at", order = "desc", category) =>
     .then((result) =>{       
         return result.rows
     })
-    
 }

@@ -81,7 +81,6 @@ describe('PATCH/api/reviews/:review_id', () => {
              
             expect(res.body.updatedReview.votes).toBe(6)
 
-            
                 expect(res.body.updatedReview.length).not.toBe(0)
                 expect(res.body.updatedReview).toMatchObject(
                     {review_id: 2,
