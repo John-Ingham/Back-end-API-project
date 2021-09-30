@@ -78,24 +78,24 @@ describe('PATCH/api/reviews/:review_id', () => {
         .send({inc_votes: newVote})
         .expect(200)
         .then((res) =>{
-            //console.log(res.body, ">>>>>>>>>>>>>>>>>>>>>>")
+             
             expect(res.body.updatedReview.votes).toBe(6)
 
-            // res.body.categories.forEach((review) =>{
-            //     expect(review.length).not.toBe(0)
-            //     expect(review).toMatchObject(
-            //         {review_id: expect.any(Number),
-            //             title: expect.any(String),
-            //             review_body: "If you've ever wanted to accuse your siblings, cousins or friends of being part of a plot to murder everyone whilst secretly choosing which one of them should get the chop next - this is the boardgame for you. Buyer beware: once you gain a reputation for being able to lie with a stone face about being the secret killer you may never lose it.",
-            //             designer: 'Fiona Lohoar',
-            //             review_image_url: 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
-            //             votes: 8,
-            //             category: 'social deduction',
-            //             owner: 'mallionaire',
-            //             created_at: 2021-01-18T10:01:41.251Z,
-            //             comment_count: '0'}
-            //     )
-            // }) 
+            
+                expect(res.body.updatedReview.length).not.toBe(0)
+                expect(res.body.updatedReview).toMatchObject(
+                    {review_id: 2,
+                        title: 'Jenga',
+                        review_body: 'Fiddly fun for all the family',
+                        designer: 'Leslie Scott',
+                        review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                        votes: 6,
+                        category: 'dexterity',
+                        owner: 'philippaclaire9',
+                        created_at: '2021-01-18T10:01:41.251Z'
+                    }
+                )
+             
         }) 
     });
     test('400; Bad request for invalid review_id - not an integer', () => {
@@ -146,15 +146,34 @@ describe('get/api/reviews/:review_id/comments', () => {
     test('404: for invalid review_id value ', () => {
         const review_id = 9090
         return request(app)
-        .get(`/api/reviews/${review_id}`)
+        .get(`/api/reviews/${review_id}/comments`)
         .expect(404)
         .then((res) =>{
             expect(res.body.msg).toBe("No review found matching 9090")
         })
-    });  
+    }); 
+    test('400; Bad request for id entry - not an integer', () => {
+        const review_id ="gibberish"
+        return request(app)
+        .get(`/api/reviews/${review_id}/comments`)
+        .expect(400)
+        .then((res) =>{
+            expect(res.body.msg).toBe("Bad request")
+        
+    });
+    })
+    test('200: Given a valid id with no comments returns an empty array', () => {
+        const review_id = 1
+        return request(app)
+        .get(`/api/reviews/${review_id}/comments`)
+        .expect(200)
+        .then((res) =>{
+            expect(res.body.comments).toHaveLength(0)
+        })
+    });
     
 });
-describe('/api/reviews', () => {
+describe.only('/api/reviews', () => {
     test('200: Should return an array of review objects', () => {
         return request(app)
         .get('/api/reviews')
@@ -180,12 +199,12 @@ describe('/api/reviews', () => {
         })
     })  
     })
-    test('200: accepts a "sort_by" query', () => {
+    test('200: accepts a "sort_by" query of votes', () => {
         return request(app)
         .get('/api/reviews?sort_by=votes')
         .expect(200)
         .then((res) =>{
-            expect(res.body).toBeSortedBy('votes')
+            expect(res.body).toBeSortedBy('votes', {descending : true})
             expect(res.body.reviews[0]).toEqual(
                 {
                     review_id: 12,
@@ -200,8 +219,48 @@ describe('/api/reviews', () => {
                   }
             )
         })
+    });
+    test('200: accepts a order query and returns ordered as queried', () => {
+        return request(app)
+        .get('/api/reviews/order=asc')
+        .expect(200)
+        .then((res) =>{
+            expect(res.body).toBeSortedBy('votes', {descending:true})
+        })
+        // Something very wrong with this currently passes, shouldn't
+    });
+    test('400: Given an incorrect sort_by will reject', () => {
+        return request(app)
+        .get('/api/reviews?sort_by=bananas')
+        .expect(400)
+        .then((res) =>{
+            expect(res.body.msg).toBe("Invalid sort query")
+        })
+    });
+    test('400: given an invalid order query will reject', () => {
+        return request(app)
+        .get('/api/reviews?order=nonsense')
+        .expect(400)
+        .then((res)=>{
+            expect(res.body.msg).toBe("Invalid order query")
+        })
+    });
+    test('200: Accepts category query', () => {
+        return request(app)
+        .get('/api/reviews?category=dexterity')
+        .expect(200)
+        .then((res) =>{
+            console.log(res.body)
+        })
         
-        
+    });
+    test('400: Given an invalid category query will reject', () => {
+        return request(app)
+        .get('/api/reviews?category=chance')
+        .expect(400)
+        .then((res) =>{
+            expect(res.body.msg).toBe("Invalid category query")
+        })
     });
 
 })
@@ -236,7 +295,7 @@ describe('/api', () => {
         .get('/api')
         .expect(200)
         .then((res) =>{
-            //console.log(res.body, "><><><><>")
+            
             expect(res.body).toEqual({
                 categoriesList: '/api/categories',
                 reviewById: '/api/reviews/:review_id',

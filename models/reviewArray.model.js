@@ -1,7 +1,15 @@
 const db = require('../db/connection')
 
 exports.fetchReviewArray = (sort_by = "created_at", order = "desc", category) => {
-    
+    if (!['', 'review_id', 'title', 'designer', 'votes', 'category', 'owner', 'created_at'].includes(sort_by)){
+        return Promise.reject({status: 400, msg: "Invalid sort query"})
+    }
+    if (!['asc', 'desc'].includes(order)){
+        return Promise.reject({status: 400, msg:"Invalid order query"})
+    }
+    // if(!['', 'euro game', 'social deduction', 'dexterity'].includes(category)){
+    //     return Promise.reject({status: 400, msg: "Invalid category query"})
+    // }
     let queryStr = `
     SELECT reviews.review_id, title, designer, review_img_url, reviews.votes, category, owner, reviews.created_at,
     COUNT(comment_id) AS comment_count 
@@ -12,8 +20,9 @@ exports.fetchReviewArray = (sort_by = "created_at", order = "desc", category) =>
     let queryValues = []
 
     if (category) {
-        queryStr += `WHERE category = $2`
         queryValues.push(category)
+        queryStr += `WHERE category=$1`
+        
     }
     queryStr += `ORDER BY ${sort_by} ${order}`
 
