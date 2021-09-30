@@ -279,15 +279,46 @@ describe('/api/reviews/:review_id/comments', () => {
         })
     });
     test('404: for invalid review_id value ', () => {
+        const username = "mallionaire"
+        const body = "This game slaps!"
         const review_id = 6969
         return request(app)
-        .get(`/api/reviews/${review_id}`)
+        .post(`/api/reviews/${review_id}/comments`)
+        .send({username: username,
+            body: body})
         .expect(404)
         .then((res) =>{
-            expect(res.body.msg).toBe("No review found matching 6969")
+            expect(res.body.msg).toBe("Unable to find requested")
         })
-    });  
-    
+    }); 
+    test('400: Given an invalid id input', () => {
+        const username = "mallionaire"
+        const body = "This game slaps!"
+        const review_id = "nonsense"
+        return request(app)
+        .post(`/api/reviews/${review_id}/comments`)
+        .send({username: username,
+            body: body})
+        .expect(400)
+        .then((res)=> {
+            expect(res.body.msg).toBe("Bad request")
+        })
+    }); 
+    test('400: Given an incomplete request, will reject', () => {
+        const review_id = 2
+        const body = "Well, I loved this game!"
+        const username = "mallionaire"
+        return request(app)
+        .post(`/api/reviews/${review_id}/comments`)
+        .send({
+               username : username
+              })
+        .expect(400)
+        .then((res) =>{
+            expect(res.body.msg).toBe("Incomplete input")
+        })
+
+    });
 });
 describe('/api', () => {
     test('200: returns an object with the list of endpoints', () => {
@@ -322,3 +353,4 @@ describe('ANY/invalid url path', () => {
     });
     
 });
+

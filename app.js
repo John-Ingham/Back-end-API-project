@@ -36,6 +36,14 @@ app.use((err, req, res, next) =>{
         next(err)
     }
 })
+app.use((err, req, res, next) =>{
+    if (err.code === "23503"){
+        res.status(404)
+        .send({msg : "Unable to find requested"})
+    } else {
+        next(err)
+    }
+})
 app.use((err, req, res, next) => {
     console.log(err, "<><><>Unhandled Error<><><>")
     res.status(500).send({msg: "Internal server error"})
