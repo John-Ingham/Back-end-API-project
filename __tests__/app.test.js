@@ -317,8 +317,20 @@ describe('/api/reviews/:review_id/comments', () => {
         .then((res) =>{
             expect(res.body.msg).toBe("Incomplete input")
         })
-
     });
+    test('404: Given a non-existant username input', () => {
+        const username = "wizbit"
+        const body = "This game slaps!"
+        const review_id = 1
+        return request(app)
+        .post(`/api/reviews/${review_id}/comments`)
+        .send({username: username,
+            body: body})
+        .expect(404)
+        .then((res)=> {
+            expect(res.body.msg).toBe("Unable to find requested")
+        })
+    }); 
 });
 describe('/api', () => {
     test('200: returns an object with the list of endpoints', () => {
