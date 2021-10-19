@@ -30,7 +30,19 @@ exports.fetchReviewArray = (
     `
   let queryValues = []
   if (category) {
-    if (!['euro game', 'social deduction', 'dexterity'].includes(category)) {
+    if (
+      ![
+        'euro game',
+        'social deduction',
+        'dexterity',
+        'strategy',
+        'hidden-roles',
+        'push-your-luck',
+        'roll-and-write',
+        'deck-building',
+        'engine-building',
+      ].includes(category)
+    ) {
       return Promise.reject({ status: 404, msg: 'Category not found' })
     }
     queryValues.push(category)
