@@ -15,6 +15,7 @@ exports.fetchReviewArray = (
       'category',
       'owner',
       'created_at',
+      'comment_count',
     ].includes(sort_by)
   ) {
     return Promise.reject({ status: 400, msg: 'Invalid sort query' })
