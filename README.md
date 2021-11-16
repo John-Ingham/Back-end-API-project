@@ -1,4 +1,5 @@
-Welcome to my api project.
+# Welcome to my api project.
+
 This is an api that holds a repository of book reviews and comments upon these reviews and users votes.
 Within you will find an SQL database with the following tables:
 Categories
@@ -10,6 +11,8 @@ This api will allow you to access these tables of information via a web browser 
 Entering /api as suffix to the web address will return a list of the endpoints available. parametric endpoints (:review_id for example) must be replaced by the user with a numeric value.
 
 To view the returned items best you will need the Chrome (or equivalent) extension - JSON viewer
+
+## To run the Back-End on a computer
 
 Please fork from my repository on Github and clone with the green copy code button to your VS code (or equivalent code viewer application).
 
