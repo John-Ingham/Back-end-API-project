@@ -10,7 +10,7 @@ Users
 This api will allow you to access these tables of information via a web browser at the hosted web address of - nc-games-lookup.herokuapp.com - using endpoints in the browser.
 Entering /api as suffix to the web address will return a list of the endpoints available. parametric endpoints (:review_id for example) must be replaced by the user with a numeric value.
 
-To view the returned items best you will need the Chrome (or equivalent) extension - JSON viewer
+To view the returned items best you will need the Chrome (or equivalent) extension - JSON viewer.
 
 ## To run the Back-End on a computer
 
