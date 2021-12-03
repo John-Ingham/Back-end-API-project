@@ -1,6 +1,6 @@
 # Welcome to my api project.
 
-##Hosted upon Heroku at [NC-Games-API](https://nc-games-lookup.herokuapp.com/api)
+## Hosted upon Heroku at [NC-Games-API](https://nc-games-lookup.herokuapp.com/api)
 
 This is an api that holds a repository of book reviews and comments upon these reviews and users votes.
 Within you will find an SQL database with the following tables:
