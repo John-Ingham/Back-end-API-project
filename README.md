@@ -5,13 +5,13 @@
 This is an api that holds a repository of book reviews and comments upon these reviews and users votes.
 Within you will find an SQL database with the following tables:
 
-## Categories
+#### Categories
 
-## Comments
+#### Comments
 
-## Reviews
+#### Reviews
 
-## Users
+#### Users
 
 Adding these as a suffix to the URL will return the relevant information from the tables.
 
